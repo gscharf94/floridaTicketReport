@@ -1,0 +1,103 @@
+<script>
+	String.prototype.replaceAll = function (a, b) {
+		let output = this;
+		let ind = output.indexOf(a);
+		let inds = [ind];
+		while (ind !== -1) {
+			output = output.replace(a, b);
+			ind = output.indexOf(a);
+			inds.push(ind);
+		}
+		return [output, inds];
+	}
+	String.prototype.insertString = function (ins, pos) {
+		let str = this;
+		let firstChunk = str.slice(0, pos);
+		let secondChunk = str.slice(pos, );
+		return firstChunk + ins + secondChunk;
+	}
+
+	let toggledJobs = {};
+	let toggledTickets = {};
+	let ticketInfo;
+
+	function init() {
+		google.script.run.withSuccessHandler(initFinish).generateMainHtml();
+	}
+
+	function initFinish(output) {
+		ticketInfo = output[1];
+		output = output[0];
+		console.log(`initFinish()`);
+		document.getElementById('mainContainer').innerHTML = output;
+		document.getElementById('loadingDiv').innerHTML = "";
+	}
+
+	function toggleJob(id) {
+		if (toggledJobs[id] == undefined) {
+			toggledJobs[id] = true;
+			document.getElementById(`jobInfo${id}`).style.visibility = 'visible';
+			document.getElementById(`jobInfo${id}`).style.height = '100%';
+		} else {
+			if (toggledJobs[id] == true) {
+				toggledJobs[id] = false;
+				document.getElementById(`jobInfo${id}`).style.visibility = 'hidden';
+				document.getElementById(`jobInfo${id}`).style.height = '0px';
+			} else {
+				toggledJobs[id] = true;
+				document.getElementById(`jobInfo${id}`).style.visibility = 'visible';
+				document.getElementById(`jobInfo${id}`).style.height = '100%';
+			}
+		}
+	}
+
+	function expandTicket(job, ticket) {
+		if (toggledTickets[ticket] == undefined) {
+			toggledTickets[ticket] = true;
+			google.script.run.withSuccessHandler(expandTicketFinish).loadImage(ticket, job, ticketInfo);
+		} else if (toggledTickets[ticket] == true) {
+			toggledTickets[ticket] = false;
+			document.getElementById(`${ticket}Content`).style.visibility = "hidden";
+			document.getElementById(`${ticket}Image`).style.height = "0px";
+			document.getElementById(`${ticket}Table`).style.height = "0px";
+			document.getElementById(`${ticket}Text`).style.height = "0px";
+
+		} else {
+			toggledTickets[ticket] = true;
+			document.getElementById(`${ticket}Content`).style.visibility = "visible";
+			document.getElementById(`${ticket}Image`).style.height = "auto";
+			document.getElementById(`${ticket}Table`).style.height = "100%";
+			document.getElementById(`${ticket}Text`).style.height = "100%";
+		}
+	}
+
+	function parseTicketText(rawText) {
+		let output = rawText.replaceAll('\r\n', "");
+		parsedText = output[0];
+		let uniqueInds = new Set();
+		for (const ind of output[1]) {
+			uniqueInds.add(ind);
+		}
+		let indArr = Array.from(uniqueInds).sort((a, b) => b - a);
+		for (const ind of indArr) {
+			parsedText = parsedText.insertString('\n', ind);
+		}
+		return parsedText;
+	}
+
+	function expandTicketFinish(output) {
+		console.log(`expandTicketFinish() start`);
+		console.log(output);
+		let imageBytes = output[0];
+		let ticketNum = output[1];
+		let ticketText = output[2];
+		let responseTable = output[3];
+
+		let parsedTicketText = parseTicketText(ticketText);
+
+		document.getElementById(`${ticketNum}Content`).style.visibility = "visible";
+		document.getElementById(`${ticketNum}Image`).src = "data:image/png;base64," + imageBytes;
+		document.getElementById(`${ticketNum}Text`).textContent = parsedTicketText;
+		document.getElementById(`${ticketNum}Table`).innerHTML = responseTable;
+	}
+</script>
