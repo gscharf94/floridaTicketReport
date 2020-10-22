@@ -90,17 +90,35 @@ class Browser {
 
 		let test = await page.evaluate(() => document.querySelector('.iq-list-items'));
 		while (test == null) {
+			console.log('repeat');
 			test = await page.evaluate(() => document.querySelector('.iq-list-items'));
 		}
 
 		let responseTable = await page.evaluate(() => {
 			let ret = [];
 			let rows = document.querySelectorAll('.iq-list-item');
+			// console.clear();
+			// console.log('rows found');
+			// console.log(rows);
+			let c = 0;
 			for (const row of rows) {
 				let cells = row.querySelectorAll('div.column-fixed');
-				let tmpRow = [cells[0].textContent, cells[1].textContent, cells[5].textContent];
+				let tmpRow;
+				// console.log(`row: ${c}`);
+				console.log(cells);
+				console.log(cells[0]);
+				if (cells[0].textContent == " Yes ") {
+					// console.log(`row ${c} SEC 1`)
+					tmpRow = [cells[1].textContent, cells[2].textContent, cells[6].textContent];
+				} else if (cells[0].textContent == " No ") {
+					// console.log(`row ${c} SEC 2`)
+					tmpRow = [cells[1].textContent, cells[2].textContent, cells[6].textContent];
+				} else {
+					// console.log(`row ${c} SEC 3`)
+					tmpRow = [cells[0].textContent, cells[1].textContent, cells[5].textContent];
+				}
+				c++;
 				ret.push(tmpRow);
-				console.log(ret);
 			}
 			return ret;
 		});

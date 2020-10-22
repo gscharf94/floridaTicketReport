@@ -1,38 +1,33 @@
 const jobFolderId = "1SKXsnWgfGUptiRTGegAxmBz4RNHkVAeX";
 const jobIdToName = {
-	1: '210_FDOT-4',
-	2: 'FREEDOMCOMMANDER_FDOT-3',
-	3: 'LAKECONWAY_FDOT-7',
-	4: 'SAMSGAS_ORANGE CO-3',
-	5: 'SAMSGAS_ORANGE CO-5',
-	6: 'SAMSGAS_ORANGE CO-6',
-	7: 'SAMSGAS_ORANGE CO-7',
-	8: 'SAMSGAS_ORANGE CO-9',
-	9: 'SAMSGAS_ORANGE CO-10',
-	10: 'SAMSGAS_ORANGE CO-11',
-	11: 'SAMSGAS_ORANGE CO-14',
-	12: 'SAMSGAS_ORANGE CO-15',
-	13: 'SAMSGAS_ORANGE CO-18',
-	14: 'SAMSGAS_ORANGE CO-19',
-	15: 'WALMART5871_FDOT-2',
-}
+	1: 'SAMSGAS_ORANGE CO-1',
+	2: 'SAMSGAS_ORANGE CO-3',
+	3: 'SAMSGAS_ORANGE CO-5',
+	4: 'SAMSGAS_ORANGE CO-6',
+	5: 'SAMSGAS_ORANGE CO-7',
+	6: 'SAMSGAS_ORANGE CO-9',
+	7: 'SAMSGAS_ORANGE CO-10',
+	8: 'SAMSGAS_ORANGE CO-11',
+	9: 'SAMSGAS_ORANGE CO-14',
+	10: 'SAMSGAS_ORANGE CO-15',
+	11: 'SAMSGAS_ORANGE CO-18',
+	12: 'SAMSGAS_ORANGE CO-19',
+};
+
 const jobNameToId = {
-	'210_FDOT-4': 1,
-	'FREEDOMCOMMANDER_FDOT-3': 2,
-	'LAKECONWAY_FDOT-7': 3,
-	'SAMSGAS_ORANGE CO-3': 4,
-	'SAMSGAS_ORANGE CO-5': 5,
-	'SAMSGAS_ORANGE CO-6': 6,
-	'SAMSGAS_ORANGE CO-7': 7,
-	'SAMSGAS_ORANGE CO-9': 8,
-	'SAMSGAS_ORANGE CO-10': 9,
-	'SAMSGAS_ORANGE CO-11': 10,
-	'SAMSGAS_ORANGE CO-14': 11,
-	'SAMSGAS_ORANGE CO-15': 12,
-	'SAMSGAS_ORANGE CO-18': 13,
-	'SAMSGAS_ORANGE CO-19': 14,
-	'WALMART5871_FDOT-2': 15,
-}
+	'SAMSGAS_ORANGE CO-1': 1,
+	'SAMSGAS_ORANGE CO-3': 2,
+	'SAMSGAS_ORANGE CO-5': 3,
+	'SAMSGAS_ORANGE CO-6': 4,
+	'SAMSGAS_ORANGE CO-7': 5,
+	'SAMSGAS_ORANGE CO-9': 6,
+	'SAMSGAS_ORANGE CO-10': 7,
+	'SAMSGAS_ORANGE CO-11': 8,
+	'SAMSGAS_ORANGE CO-14': 9,
+	'SAMSGAS_ORANGE CO-15': 10,
+	'SAMSGAS_ORANGE CO-18': 11,
+	'SAMSGAS_ORANGE CO-19': 12,
+};
 
 
 function doGet() {
@@ -129,8 +124,10 @@ function generateResponseTable(tick) {
 	for (const row of responseArr) {
 		let defaultReady = "notReady";
 		let response = row[2];
-		if (response[0] == '2' || response.indexOf("No Conflict") != -1) {
+		if (response.indexOf('Marked') != -1 || response.indexOf("No Conflict") != -1 || response.indexOf('Clear No') != -1) {
 			defaultReady = "ready";
+		} else if (response.indexOf('Ongoing Job') != -1) {
+			defaultReady = "yellowReady";
 		}
 		let htmlRow = `<tr class="${defaultReady}">`;
 		for (const item of row) {

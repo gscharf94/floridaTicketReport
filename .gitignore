@@ -5,3 +5,10 @@ jobInfo/
 locateReport/
 
 package-lock.json
+
+credentials.json
+
+token.json
+
+GAS/.clasp.json
+
